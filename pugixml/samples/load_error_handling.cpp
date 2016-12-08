@@ -1,5 +1,3 @@
-#include "../pugixml.hpp"
-
 #include <iostream>
 
 void check_xml(const char* source)
