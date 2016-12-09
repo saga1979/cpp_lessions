@@ -37,6 +37,7 @@ void find_test()
 	str_src.replace(str_src.find(str_find), str_find.length(), "preposition");
 	std::cout << str_src << '\n';
 	std::cout << str_src.c_str() << '\n';//注意观察与上一行的输出差别
+	std::cout << "erase 0-10:" << str_src.erase(0, 10) << std::endl;
 
 }
 
@@ -45,7 +46,7 @@ void find_test()
 void size_test()
 {
 	//string的容量/尺寸/长度
-	std::string buf;
+	std::string buf("zf");
 	std::cout << "buf capacity:" << buf.capacity() << std::endl;
 	std::cout << "buf size:" << buf.size() << std::endl;
 	std::cout << "buf len:" << buf.length() << std::endl;
@@ -53,6 +54,7 @@ void size_test()
 	std::cout << "buf capacity:" << buf.capacity() << std::endl;
 	std::cout << "buf size:" << buf.size() << std::endl;
 	std::cout << "buf len:" << buf.length() << std::endl;
+	buf += "zf";
 	buf.reserve(1024 * 10);
 	std::cout << "buf capacity:" << buf.capacity() << std::endl;
 	std::cout << "buf size:" << buf.size() << std::endl;
