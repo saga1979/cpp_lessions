@@ -4,7 +4,7 @@
 #include <cstdint>
 typedef std::basic_string<uint8_t> ustring;
 
-int main()
+void find_test()
 {
 	std::string str_src("There are two needles in this haystack with needles.");
 	//string表示char类型数据的容器,并不等同char *,char* 遇到'\0'就终结
@@ -38,6 +38,12 @@ int main()
 	std::cout << str_src << '\n';
 	std::cout << str_src.c_str() << '\n';//注意观察与上一行的输出差别
 
+}
+
+
+
+void size_test()
+{
 	//string的容量/尺寸/长度
 	std::string buf;
 	std::cout << "buf capacity:" << buf.capacity() << std::endl;
@@ -56,5 +62,12 @@ int main()
 	std::cout << "buf capacity:" << buf.capacity() << std::endl;
 	std::cout << "buf size:" << buf.size() << std::endl;
 	std::cout << "buf len:" << buf.length() << std::endl;
+}
+
+int main()
+{
+	find_test();
+	size_test();
+	
 	return 0;
 }

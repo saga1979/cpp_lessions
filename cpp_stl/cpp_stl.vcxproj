@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="protocol_parser.h" />
     <ClInclude Include="string_test.h" />
     <ClInclude Include="vector_test.h" />
   </ItemGroup>
