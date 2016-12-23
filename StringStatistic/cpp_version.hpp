@@ -13,17 +13,12 @@ struct InputInfo
 {
 	string data;
 	string time;
-	
+	//将结构体内容合并为,保存到文件,也可以打印(未考虑人性化打印格式)
 	string to_string()
 	{
-		string data;
-		data += this->data;
-		data += "|";
-		data += this->time;
-		data += "\n";
-		return data;
+		return data + "|" + time + "\n";
 	}
-
+	//从符合格式要求的字符串分离出内容
 	InputInfo& from_string(const string& str)
 	{
 		data = str.substr(0, str.find("|"));
@@ -34,7 +29,7 @@ struct InputInfo
 };
 
 static multimap<string, InputInfo*> s_inputs;
-
+//处理用户输入数据
 static void process_storeloop()
 {
 	while (1)
@@ -46,17 +41,20 @@ static void process_storeloop()
 		{
 			break;
 		}
+		//生成新的输入信息
 		InputInfo* pinfo = new InputInfo;
 		pinfo->data = data;
+		//格式化时间(2016-12-12 12:12:12)
 		char buffer[256] = { 0 };
 		time_t time = ::time(0);
 		struct tm* timeinfo = localtime(&time);
 		strftime(buffer, 255, "%F %X", timeinfo);
 		pinfo->time = buffer;
+		//加入到map
 		s_inputs.insert(pair<string, InputInfo*>(data, pinfo));		
 	}
 }
-
+//处理查找数据
 static void process_searchloop()
 {
 	while (1)
@@ -71,10 +69,9 @@ static void process_searchloop()
 		pair<multimap<string, InputInfo*>::iterator, multimap<string, InputInfo*>::iterator>
 			ret = s_inputs.equal_range(data);
 		int count = 0;
-		for (multimap<string, InputInfo*>::iterator it = ret.first; it != ret.second; it++)
+		for (multimap<string, InputInfo*>::iterator it = ret.first; it != ret.second; it++, count++)
 		{
 			cout << it->second->to_string() << endl;
-			count++;
 		}
 		if (count == 0)
 		{
@@ -84,12 +81,12 @@ static void process_searchloop()
 		cout << "[" << data << "] count:" << count << endl;
 	}
 }
-
+//从文件加载数据
 static void load_data()
 {
 	ifstream ifs;
 	ifs.open(DATA_FILE, std::ifstream::in);
-	char buf[256];
+	char buf[256] = { 0 };
 
 	while (ifs.getline(buf, 256)) 
 	{
@@ -98,7 +95,7 @@ static void load_data()
 		s_inputs.insert(pair<string, InputInfo*>(pinfo->data, pinfo));
 	}
 }
-
+//保存数据到磁盘文件
 static void store_data()
 {
 	ofstream ofs;
@@ -119,17 +116,12 @@ int main(int argc, char** argv)
 	string data;
 	load_data();
 	while (1)
-	{
+	{//打印功能菜单
 		cout << "select functions:\n" 
 			<< "1)store something\n" 
 			<< "2)search something\n"
-			<<"any other to exit....."
-			<< endl;
+			<<"any other to exit....." << endl;
 		::getline(cin, data);
-		if (data.empty())
-		{			
-			break;
-		}
 
 		if (data == "1")
 		{
