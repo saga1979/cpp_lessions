@@ -147,10 +147,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="array.h" />
+    <ClInclude Include="object_model_01.h" />
+    <ClInclude Include="object_model_02.h" />
+    <ClInclude Include="object_model_03.h" />
+    <ClInclude Include="object_model_04.h" />
+    <ClInclude Include="object_model_05.h" />
+    <ClInclude Include="object_model_06.h" />
+    <ClInclude Include="object_model_07.h" />
+    <ClInclude Include="object_model_08.h" />
+    <ClInclude Include="object_model_pub.h" />
     <ClInclude Include="operator_test.h" />
     <ClInclude Include="point_to_class_mem.h" />
     <ClInclude Include="polymorphism.h" />
     <ClInclude Include="polymorphism_switch.h" />
+    <ClInclude Include="virual_func_table.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="array.cpp" />

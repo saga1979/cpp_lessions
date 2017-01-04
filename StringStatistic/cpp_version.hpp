@@ -107,8 +107,8 @@ static void store_data()
 		ofs.write(data.c_str(), data.length());
 		delete it->second;
 	}
-
-	ofs.close();
+	/*手动关闭一个流对象也没什么坏处,但是这种方式不是C++推荐的,析构函数会处理这一切*/
+	//ofs.close();
 }
 
 int main(int argc, char** argv)

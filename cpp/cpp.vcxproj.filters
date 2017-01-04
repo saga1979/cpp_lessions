@@ -30,6 +30,36 @@
     <ClInclude Include="point_to_class_mem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="virual_func_table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_01.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_02.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_03.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_04.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_05.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_pub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_06.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_07.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object_model_08.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
