@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+
 
 struct clientData
 {
@@ -70,8 +72,12 @@ void textFile(FILE *readPtr)
 
 		while (!feof(readPtr))
 		{
-			fread(&client, sizeof(struct clientData), 1,
+			size_t ret = fread(&client, sizeof(struct clientData), 1,
 				readPtr);
+			if (ret != 1)
+			{
+				break;
+			}
 
 			if (client.acctNum != 0)
 				fprintf(writePtr, "%-6d%-16s%-11s%10.2f\n",
