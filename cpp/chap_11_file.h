@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-struct clientData 
+struct clientData
 {
 	int acctNum;
 	char lastName[15];
@@ -20,35 +20,35 @@ int main()
 {
 	FILE *cfPtr = 0;
 
-	if ((cfPtr = fopen("credit.dat", "r+")) == NULL)
+	if ((cfPtr = fopen("credit.dat", "a+")) == NULL)
 	{
 		printf("File could not be opened.\n");
+		return -1;
 	}
-	else
+
+	int choice;
+	while ((choice = enterChoice()) != 5)
 	{
-		int choice;
-		while ((choice = enterChoice()) != 5)
+
+		switch (choice)
 		{
-
-			switch (choice)
-			{
-			case 1:
-				textFile(cfPtr);
-				break;
-			case 2:
-				updateRecord(cfPtr);
-				break;
-			case 3:
-				newRecord(cfPtr);
-				break;
-			case 4:
-				deleteRecord(cfPtr);
-				break;
-			}
+		case 1:
+			textFile(cfPtr);
+			break;
+		case 2:
+			updateRecord(cfPtr);
+			break;
+		case 3:
+			newRecord(cfPtr);
+			break;
+		case 4:
+			deleteRecord(cfPtr);
+			break;
 		}
-
-		fclose(cfPtr);
 	}
+
+	fclose(cfPtr);
+
 
 	return 0;
 }
@@ -98,8 +98,11 @@ void updateRecord(FILE *fPtr)
 	fread(&client, sizeof(struct clientData), 1, fPtr);
 
 	if (client.acctNum == 0)
+	{
 		printf("Acount #%d has no information.\n", account);
-	else {
+	}
+	else 
+	{
 		printf("%-6d%-16s%-11s%10.2f\n\n",
 			client.acctNum, client.lastName,
 			client.firstName, client.balance);
@@ -132,8 +135,11 @@ void deleteRecord(FILE *fPtr)
 	fread(&client, sizeof(struct clientData), 1, fPtr);
 
 	if (client.acctNum == 0)
+	{
 		printf("Account %d does not exist.\n", accountNum);
-	else {
+	}
+	else 
+	{
 		fseek(fPtr,
 			(accountNum - 1) * sizeof(struct clientData),
 			SEEK_SET);
@@ -154,9 +160,12 @@ void newRecord(FILE *fPtr)
 	fread(&client, sizeof(struct clientData), 1, fPtr);
 
 	if (client.acctNum != 0)
+	{
 		printf("Account #%d already contains information.\n",
 			client.acctNum);
-	else {
+	}
+	else 
+	{
 		printf("Enter lastname, firstname, balance\n? ");
 		scanf("%s%s%lf", &client.lastName, &client.firstName,
 			&client.balance);

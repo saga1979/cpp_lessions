@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="array.h" />
+    <ClInclude Include="chap_11_file.h" />
     <ClInclude Include="object_model_01.h" />
     <ClInclude Include="object_model_02.h" />
     <ClInclude Include="object_model_03.h" />

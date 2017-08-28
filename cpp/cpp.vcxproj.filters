@@ -60,6 +60,9 @@
     <ClInclude Include="object_model_08.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="chap_11_file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

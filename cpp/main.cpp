@@ -14,4 +14,6 @@
 //#include "object_model_05.h" //访问虚表
 //#include "object_model_06.h" //虚表与多重继承
 //#include "object_model_07.h" //虚表地址
-#include "object_model_08.h"
+//#include "object_model_08.h"
+
+#include "chap_11_file.h" //文件操作综合示例
