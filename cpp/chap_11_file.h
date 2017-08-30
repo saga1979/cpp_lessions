@@ -237,18 +237,17 @@ void newRecord(FILE *fPtr)
 
 int updateData(OperatorType type, ClientData * data)
 {
-	int index = recordIndex(data->acctNum);
-
+	int index = recordIndex(type == INSERT ? INVALID_ACCOUNT_NO:data->acctNum);
 	if (-1 == index)
 	{
-		printf("Account %d does not exist.\n", data->acctNum);
+		printf("Account %d does not valid.\n", data->acctNum);
 		return -1;
-	}
+	}	
 
 	switch (type)
 	{
 	case DELETE:
-	{	
+	{			
 		//更新文件
 		fseek(cfPtr, index * sizeof(ClientData), SEEK_SET);
 		data->acctNum = INVALID_ACCOUNT_NO;
@@ -259,7 +258,7 @@ int updateData(OperatorType type, ClientData * data)
 	}
 		break;
 	case UPDATE:
-	{
+	{		
 		//更新数据
 		s_clients[index].balance = data->balance;//更新数据缓冲
 		fseek(cfPtr,
@@ -272,8 +271,6 @@ int updateData(OperatorType type, ClientData * data)
 	break;
 	case INSERT:
 	{
-		//找到第一条可用record位置
-		index = recordIndex(INVALID_ACCOUNT_NO);
 		//更新数据记录文件
 		fseek(cfPtr, index * sizeof(ClientData), SEEK_SET);
 		fwrite(data, sizeof(ClientData), 1, cfPtr);
