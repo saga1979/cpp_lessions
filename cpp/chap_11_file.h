@@ -15,6 +15,8 @@ enum
 	INVALID_ACCOUNT_NO = 0,
 };
 
+
+
 typedef struct _ClientData
 {
 	int acctNum;
@@ -24,6 +26,16 @@ typedef struct _ClientData
 }ClientData;
 
 static ClientData s_clients[MAX_ACCOUNT_NUM] = { 0 };
+
+enum OperatorType
+{
+	INSERT,
+	DELETE,
+	UPDATE,
+};
+
+int	 updateData(OperatorType type, const ClientData* data);
+
 
 int  enterChoice(void);
 void textFile(FILE *);
@@ -44,9 +56,11 @@ bool fileExist(const char* file)
 	return true;
 }
 
+static FILE *cfPtr = 0;
+
 int main()
 {
-	FILE *cfPtr = 0;
+	
 	//对文件是否存在分情况处理
 	if (!fileExist(FILE_PATH))
 	{
@@ -167,23 +181,21 @@ void updateRecord(FILE *fPtr)
 		printf("Acount #%d has no information.\n", account);
 		return;
 	}
+
+	ClientData data = s_clients[index];
+
 	printf("%-6d%-16s%-11s%10.2f\n\n",
-		s_clients[index].acctNum, s_clients[index].lastName,
-		s_clients[index].firstName, s_clients[index].balance);
+		data.acctNum, data.lastName,
+		data.firstName, data.balance);
 	printf("Enter charge ( + ) or payment ( - ): ");
 	double transaction;
 	scanf("%lf", &transaction);
-	
+	data.balance += transaction;
 	printf("%-6d%-16s%-11s%10.2f\n",
-		s_clients[index].acctNum, s_clients[index].lastName,
-		s_clients[index].firstName, s_clients[index].balance);
-	//更新数据
-	s_clients[index].balance += transaction;//更新数据缓冲
-	fseek(fPtr,
-		index * sizeof(ClientData),
-		SEEK_SET);
-	fwrite(&s_clients[index], sizeof(ClientData), 1,
-		fPtr);//更新文件
+		data.acctNum, data.lastName,
+		data.firstName, data.balance);
+
+	updateData(UPDATE, &data);	
 }
 
 void deleteRecord(FILE *fPtr)
@@ -194,20 +206,10 @@ void deleteRecord(FILE *fPtr)
 		"delete ( 1 - 100 ): ");
 	scanf("%d", &accountNum);
 
-	int index = recordIndex(accountNum);
-
-	if (-1 == index)
-	{
-		printf("Account %d does not exist.\n", accountNum);
-		return;
-	}
-	//更新文件
-	fseek(fPtr, index * sizeof(ClientData), SEEK_SET);
 	ClientData 	blankClient = { INVALID_ACCOUNT_NO, "", "", 0 };
-	fwrite(&blankClient,
-		sizeof(ClientData), 1, fPtr);
-	//更新内存数据
-	s_clients[index].acctNum = INVALID_ACCOUNT_NO;
+	blankClient.acctNum = accountNum;
+
+	updateData(DELETE, &blankClient);	
 	
 }
 
@@ -230,13 +232,60 @@ void newRecord(FILE *fPtr)
 		&client.balance);
 	client.acctNum = accountNum;
 
-	//找到第一条可用record位置
-	index = recordIndex(INVALID_ACCOUNT_NO);
-	//更新数据记录文件
-	fseek(fPtr, index*sizeof(ClientData), SEEK_SET);
-	fwrite(&client,sizeof(ClientData), 1, fPtr);
-	//更新缓冲区数据	
-	s_clients[index] = client;
+	updateData(INSERT, &client);	
+}
+
+int updateData(OperatorType type, ClientData * data)
+{
+	int index = recordIndex(data->acctNum);
+
+	if (-1 == index)
+	{
+		printf("Account %d does not exist.\n", data->acctNum);
+		return -1;
+	}
+
+	switch (type)
+	{
+	case DELETE:
+	{	
+		//更新文件
+		fseek(cfPtr, index * sizeof(ClientData), SEEK_SET);
+		data->acctNum = INVALID_ACCOUNT_NO;
+		fwrite(data,
+			sizeof(ClientData), 1, cfPtr);
+		//更新内存数据
+		s_clients[index].acctNum = INVALID_ACCOUNT_NO;
+	}
+		break;
+	case UPDATE:
+	{
+		//更新数据
+		s_clients[index].balance = data->balance;//更新数据缓冲
+		fseek(cfPtr,
+			index * sizeof(ClientData),
+			SEEK_SET);
+		fwrite(&s_clients[index], sizeof(ClientData), 1,
+			cfPtr);//更新文件
+
+	}
+	break;
+	case INSERT:
+	{
+		//找到第一条可用record位置
+		index = recordIndex(INVALID_ACCOUNT_NO);
+		//更新数据记录文件
+		fseek(cfPtr, index * sizeof(ClientData), SEEK_SET);
+		fwrite(data, sizeof(ClientData), 1, cfPtr);
+		//更新缓冲区数据	
+		s_clients[index] = *data;
+	}
+	break;
+	default:
+		break;
+	}
+
+	return 0;
 }
 
 int enterChoice(void)
