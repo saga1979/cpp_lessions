@@ -3,8 +3,17 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
 #include <cstdbool>
+#include <cstring>
 
-static const int MAX_NUM = 100;
+
+static const int MAX_ACCOUNT_NUM = 100;
+static const char* FILE_PATH = "credit.dat";
+
+
+enum 
+{
+	INVALID_ACCOUNT_NO = 0,
+};
 
 typedef struct _ClientData
 {
@@ -14,9 +23,9 @@ typedef struct _ClientData
 	double balance;
 }ClientData;
 
-static ClientData s_clients[MAX_NUM] = { 0 };
+static ClientData s_clients[MAX_ACCOUNT_NUM] = { 0 };
 
-int enterChoice(void);
+int  enterChoice(void);
 void textFile(FILE *);
 void updateRecord(FILE *);
 void newRecord(FILE *);
@@ -26,29 +35,32 @@ void initialize(FILE *);
 
 int  recordIndex(int);
 
+bool fileExist(const char* file)
+{
+	FILE *pf = fopen(file, "r");
+	if (pf == 0)
+		return false;
+	fclose(pf);
+	return true;
+}
+
 int main()
 {
 	FILE *cfPtr = 0;
 	//对文件是否存在分情况处理
-	if ((cfPtr = fopen("credit.dat", "r")) == NULL)
+	if (!fileExist(FILE_PATH))
 	{
-		printf("File could not be opened.\n");
-		cfPtr = fopen("credit.dat", "w+");
-		if (cfPtr == 0)
-		{
-			perror("create file:");
-			return -1;
-		}
+		cfPtr = fopen(FILE_PATH, "w+");
 	}
 	else
 	{
-		fclose(cfPtr);
-		cfPtr = fopen("credit.dat", "r+");
-		if (cfPtr == 0)
-		{
-			perror("create file:");
-			return -1;
-		}
+		cfPtr = fopen(FILE_PATH, "r+");
+	}
+
+	if (cfPtr == 0)
+	{
+		perror("create file:");
+		return -1;
 	}
 
 	initialize(cfPtr);
@@ -82,8 +94,9 @@ int main()
 
 void initialize(FILE *file)
 {
+	memset(s_clients, 0, MAX_ACCOUNT_NUM * sizeof(ClientData));
 	int count = 0;
-	while (!feof(file) && count < MAX_NUM)
+	while (!feof(file) && count < MAX_ACCOUNT_NUM)
 	{
 		size_t ret = fread(&s_clients[count], sizeof(ClientData), 1, file);
 		if (ret != 1)
@@ -96,7 +109,7 @@ void initialize(FILE *file)
 
 int recordIndex(int account)
 {
-	for (int i = 0; i < MAX_NUM; i++)
+	for (int i = 0; i < MAX_ACCOUNT_NUM; i++)
 	{
 		if (s_clients[i].acctNum == account)
 		{
@@ -130,7 +143,7 @@ void textFile(FILE *readPtr)
 				break;
 			}
 
-			if (client.acctNum != 0)
+			if (client.acctNum != INVALID_ACCOUNT_NO)
 				fprintf(writePtr, "%-6d%-16s%-11s%10.2f\n",
 					client.acctNum, client.lastName,
 					client.firstName, client.balance);
@@ -144,7 +157,6 @@ void textFile(FILE *readPtr)
 void updateRecord(FILE *fPtr)
 {
 	int account;
-	double transaction;
 
 	printf("Enter account to update ( 1 - 100 ): ");
 	scanf("%d", &account);
@@ -155,28 +167,27 @@ void updateRecord(FILE *fPtr)
 		printf("Acount #%d has no information.\n", account);
 		return;
 	}
-
 	printf("%-6d%-16s%-11s%10.2f\n\n",
 		s_clients[index].acctNum, s_clients[index].lastName,
 		s_clients[index].firstName, s_clients[index].balance);
 	printf("Enter charge ( + ) or payment ( - ): ");
+	double transaction;
 	scanf("%lf", &transaction);
-	s_clients[index].balance += transaction;
+	
 	printf("%-6d%-16s%-11s%10.2f\n",
 		s_clients[index].acctNum, s_clients[index].lastName,
 		s_clients[index].firstName, s_clients[index].balance);
-
+	//更新数据
+	s_clients[index].balance += transaction;//更新数据缓冲
 	fseek(fPtr,
 		index * sizeof(ClientData),
 		SEEK_SET);
 	fwrite(&s_clients[index], sizeof(ClientData), 1,
-		fPtr);
+		fPtr);//更新文件
 }
 
 void deleteRecord(FILE *fPtr)
-{
-	ClientData client,
-		blankClient = { 0, "", "", 0 };
+{	
 	int accountNum;
 
 	printf("Enter account number to "
@@ -190,12 +201,13 @@ void deleteRecord(FILE *fPtr)
 		printf("Account %d does not exist.\n", accountNum);
 		return;
 	}
-
+	//更新文件
 	fseek(fPtr, index * sizeof(ClientData), SEEK_SET);
+	ClientData 	blankClient = { INVALID_ACCOUNT_NO, "", "", 0 };
 	fwrite(&blankClient,
 		sizeof(ClientData), 1, fPtr);
 	//更新内存数据
-	s_clients[index].acctNum = 0;
+	s_clients[index].acctNum = INVALID_ACCOUNT_NO;
 	
 }
 
@@ -205,28 +217,25 @@ void newRecord(FILE *fPtr)
 	int accountNum;
 	printf("Enter new account number ( 1 - 100 ): ");
 	scanf("%d", &accountNum);
+	//找到该记录在列表中的索引
 	int index = recordIndex(accountNum);
-	if (-1 != index)
+	if (-1 != index)//如果该记录已经存在
 	{
 		printf("Account #%d already contains information.\n",
 			client.acctNum);
 		return;
 	}
-
 	printf("Enter lastname, firstname, balance\n? ");
 	scanf("%s%s%lf", &client.lastName, &client.firstName,
 		&client.balance);
 	client.acctNum = accountNum;
-	fseek(fPtr, 0, SEEK_END);
-	fwrite(&client,
-		sizeof(ClientData), 1, fPtr);
 
-	//更新内存数据
-	index = 0; 
-	while (s_clients[index].acctNum != 0)
-	{
-		index++;
-	}
+	//找到第一条可用record位置
+	index = recordIndex(INVALID_ACCOUNT_NO);
+	//更新数据记录文件
+	fseek(fPtr, index*sizeof(ClientData), SEEK_SET);
+	fwrite(&client,sizeof(ClientData), 1, fPtr);
+	//更新缓冲区数据	
 	s_clients[index] = client;
 }
 
