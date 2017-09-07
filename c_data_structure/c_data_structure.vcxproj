@@ -148,11 +148,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dlink.c" />
+    <ClCompile Include="lite_queue.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dlink.h" />
     <ClInclude Include="link_test.h" />
+    <ClInclude Include="lite_queque.h" />
+    <ClInclude Include="lite_queue_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

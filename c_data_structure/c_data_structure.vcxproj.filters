@@ -21,12 +21,21 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lite_queue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dlink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="link_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lite_queque.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lite_queue_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
